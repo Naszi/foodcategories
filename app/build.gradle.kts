@@ -65,8 +65,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.material)
 
-    val room = "2.6.1"
-
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

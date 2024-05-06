@@ -4,11 +4,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naszi.mobilapp.foodcategories.database.Graph
 import com.naszi.mobilapp.foodcategories.model.CategoriesState
+import com.naszi.mobilapp.foodcategories.model.database.Comment
+import com.naszi.mobilapp.foodcategories.repository.CommentRepository
 import com.naszi.mobilapp.foodcategories.service.foodCategoriesService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
+class MainViewModel(
+    private val commentRepository: CommentRepository = Graph.commentRepository
+): ViewModel() {
     private val _categoriesState = mutableStateOf(CategoriesState())
     val categoriesState: State<CategoriesState> = _categoriesState
 
@@ -32,5 +39,21 @@ class MainViewModel: ViewModel() {
                 )
             }
         }
+    }
+
+    fun addComment(comment: Comment) {
+        viewModelScope.launch(Dispatchers.IO) {
+            commentRepository.addComment(comment)
+        }
+    }
+
+    fun deleteComment(comment: Comment) {
+        viewModelScope.launch {
+            commentRepository.deleteComment(comment)
+        }
+    }
+
+    fun getCommentById(id: Long): Flow<Comment> {
+        return commentRepository.getCommentById(id)
     }
 }
