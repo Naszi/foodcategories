@@ -14,18 +14,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.CategoriesState
 import com.naszi.mobilapp.foodcategories.model.Category
+import com.naszi.mobilapp.foodcategories.utils.Constants.FOOD_CATEGORY
 
 @Composable
 fun CategoryScreen(
@@ -33,16 +37,26 @@ fun CategoryScreen(
     viewState: CategoriesState,
     navigateToDetail: (Category) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        when {
-            viewState.loading -> {
-                CircularProgressIndicator(modifier.align(Alignment.Center))
-            }
-            viewState.error != null -> {
-                Text(text = "ERROR OCCURRED")
-            }
-            else -> {
-                CategoriesScreen(categories = viewState.list, navigateToDetail)
+    Scaffold(
+        topBar = {
+            AppBarView(title = FOOD_CATEGORY)
+        }
+    ) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(it)) {
+            when {
+                viewState.loading -> {
+                    CircularProgressIndicator(modifier.align(Alignment.Center))
+                }
+
+                viewState.error != null -> {
+                    Text(text = "ERROR OCCURRED")
+                }
+
+                else -> {
+                    CategoriesScreen(categories = viewState.list, navigateToDetail)
+                }
             }
         }
     }
@@ -74,7 +88,7 @@ fun CategoryItem(
             .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             .clickable { navigateToDetail(category) },
         elevation = 10.dp,
-        backgroundColor = Color.White
+        backgroundColor = colorResource(id = R.color.teal_200)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

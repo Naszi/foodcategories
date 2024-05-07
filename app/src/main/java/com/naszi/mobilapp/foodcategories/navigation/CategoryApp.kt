@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.naszi.mobilapp.foodcategories.model.Category
 import com.naszi.mobilapp.foodcategories.ui.CategoryDetailScreen
 import com.naszi.mobilapp.foodcategories.ui.CategoryScreen
@@ -36,7 +35,10 @@ fun CategoryApp(
             val category =
                 navController.previousBackStackEntry?.savedStateHandle?.get<Category>("category")
                     ?: Category("", "", "", "")
-            CategoryDetailScreen(category = category)
+            CategoryDetailScreen(
+                category = category,
+                navController = navController
+            )
         }
     }
 }
