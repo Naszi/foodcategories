@@ -20,6 +20,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,14 +39,17 @@ import coil.compose.rememberAsyncImagePainter
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.Category
 import com.naszi.mobilapp.foodcategories.utils.Constants.CATEGORY_DETAILS
+import com.naszi.mobilapp.foodcategories.viewmodel.MainViewModel
 
 @Composable
 fun CategoryDetailScreen(
+    viewModel: MainViewModel,
     category: Category,
     navController: NavController
 ) {
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
+    var isAddPopupVisible by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             AppBarView(title = CATEGORY_DETAILS) {navController.navigateUp()}
@@ -53,8 +60,7 @@ fun CategoryDetailScreen(
                 contentColor = Color.White,
                 backgroundColor = colorResource(id = R.color.teal_700),
                 onClick = {
-                    Toast.makeText(context, "FBClicked Button", Toast.LENGTH_LONG).show()
-//                    navController.navigate(Screen.AddScreen.route + "/0L")
+                    isAddPopupVisible = true
                 }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
@@ -95,6 +101,13 @@ fun CategoryDetailScreen(
                     ),
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 )
+                if (isAddPopupVisible) {
+                    AddCommentPopup(
+                        viewModel = viewModel,
+                        category = category,
+                        onDismiss = { isAddPopupVisible = false }
+                    )
+                }
             }
         }
     }

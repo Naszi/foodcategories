@@ -36,6 +36,7 @@ fun CategoryApp(
                 navController.previousBackStackEntry?.savedStateHandle?.get<Category>("category")
                     ?: Category("", "", "", "")
             CategoryDetailScreen(
+                viewModel = categoriesViewModel,
                 category = category,
                 navController = navController
             )
