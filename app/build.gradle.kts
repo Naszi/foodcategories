@@ -74,6 +74,9 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.runtime.rxjava2)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
 
     implementation(libs.androidx.core.ktx)

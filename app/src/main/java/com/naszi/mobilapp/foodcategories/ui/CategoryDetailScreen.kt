@@ -43,6 +43,8 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
+import com.naszi.mobilapp.foodcategories.model.database.Comment
+import com.naszi.mobilapp.foodcategories.navigation.Screen
 import com.naszi.mobilapp.foodcategories.utils.Constants.CATEGORY_DETAILS
 import com.naszi.mobilapp.foodcategories.viewmodel.MainViewModel
 
@@ -56,7 +58,7 @@ fun CategoryDetailScreen(
     var isAddOrEditPopupVisible by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
-            AppBarView(title = CATEGORY_DETAILS) {navController.navigateUp()}
+            AppBarView(title = CATEGORY_DETAILS) { navController.navigateUp() }
         },
         floatingActionButton = {
             if (!category.hasComment) {
@@ -104,7 +106,15 @@ fun CategoryDetailScreen(
                 if (category.hasComment) {
                     CommentView(
                         comment = category.comment,
-                        onDelete = { /*TODO*/ },
+                        onDelete = {
+                            val comment = Comment(
+                                id = category.id,
+                                categoryItemId = category.idCategory.toInt(),
+                                comment = category.comment
+                            )
+                            viewModel.deleteComment(comment = comment)
+                            navController.navigate(Screen.CategoryScreen.route)
+                        },
                         onEdit = { isAddOrEditPopupVisible = true }
                     )
                 }

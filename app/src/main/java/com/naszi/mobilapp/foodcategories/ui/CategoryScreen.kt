@@ -44,9 +44,11 @@ fun CategoryScreen(
             AppBarView(title = FOOD_CATEGORY)
         }
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(it)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
             when {
                 viewState.loading -> {
                     CircularProgressIndicator(modifier.align(Alignment.Center))
@@ -72,8 +74,7 @@ fun CategoriesScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(categories) {
-            category ->
+        items(categories) { category ->
             Row(
                 modifier = Modifier.clickable { navigateToDetail(category) }
             ) {

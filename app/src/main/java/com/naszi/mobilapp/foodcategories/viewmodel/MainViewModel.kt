@@ -12,7 +12,6 @@ import com.naszi.mobilapp.foodcategories.repository.CommentRepository
 import com.naszi.mobilapp.foodcategories.service.foodCategoriesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -73,22 +72,45 @@ class MainViewModel(
     fun addComment(comment: Comment) {
         viewModelScope.launch(Dispatchers.IO) {
             commentRepository.addComment(comment)
-            val category = _categoriesState.value.list.find { it.idCategory == comment.categoryItemId.toString() }
+            val category =
+                _categoriesState.value.list.find { it.idCategory == comment.categoryItemId.toString() }
             category?.hasComment = true
             _categoriesState.value = _categoriesState.value.copy(list = _categoriesState.value.list)
+            fetchCategories()
+        }
+    }
+
+    fun updateComment(categoryId: Int, comment: Comment) {
+        viewModelScope.launch(Dispatchers.IO) {
+            commentRepository.updateComment(comment)
+            _categoriesState.value = _categoriesState.value.copy(
+                list = _categoriesState.value.list.map { category ->
+                    if (category.idCategory.toInt() == categoryId) {
+                        category.copy(comment = comment.comment)
+                    } else {
+                        category
+                    }
+                }
+            )
+            fetchCategories()
         }
     }
 
     fun deleteComment(comment: Comment) {
         viewModelScope.launch {
             commentRepository.deleteComment(comment)
-            val category = _categoriesState.value.list.find { it.idCategory == comment.categoryItemId.toString() }
-            category?.hasComment = false
-            _categoriesState.value = _categoriesState.value.copy(list = _categoriesState.value.list)
+            val updatedCategories = _categoriesState.value.list.map { category ->
+                if (category.idCategory == comment.categoryItemId.toString()) {
+                    category.copy(
+                        hasComment = false,
+                        id = 0L,
+                        comment = ""
+                    )
+                } else {
+                    category
+                }
+            }
+            _categoriesState.value = _categoriesState.value.copy(list = updatedCategories)
         }
-    }
-
-    fun getCommentById(id: Long): Flow<Comment> {
-        return commentRepository.getCommentById(id)
     }
 }

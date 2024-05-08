@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.model.database.Comment
+import com.naszi.mobilapp.foodcategories.navigation.Screen
 import com.naszi.mobilapp.foodcategories.viewmodel.MainViewModel
 
 @Composable
@@ -64,16 +65,17 @@ fun AddOrEditCommentPopup(
             TextButton(
                 onClick = {
                     val comment = Comment(
+                        id = category?.id ?: 0,
                         categoryItemId = category?.idCategory?.toInt() ?: 0,
                         comment = commentText
                     )
-                    if (category == null) {
+                    if (category?.hasComment == false) {
                         viewModel.addComment(comment)
-//                        navController.navigate(Screen.CategoryScreen.route)
                     } else {
-                        // TODO viewModel.updateComment(category.idCategory.toInt(), commentText)
+                        viewModel.updateComment(category?.idCategory?.toInt() ?: 0, comment)
                     }
                     onDismiss()
+                    navController.navigate(Screen.CategoryScreen.route)
                 },
                 modifier = Modifier.padding(8.dp)
             ) {
