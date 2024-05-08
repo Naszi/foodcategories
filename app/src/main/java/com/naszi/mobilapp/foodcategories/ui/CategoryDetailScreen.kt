@@ -1,11 +1,13 @@
 package com.naszi.mobilapp.foodcategories.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,11 +15,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +42,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.naszi.mobilapp.foodcategories.R
-import com.naszi.mobilapp.foodcategories.model.Category
 import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.utils.Constants.CATEGORY_DETAILS
 import com.naszi.mobilapp.foodcategories.viewmodel.MainViewModel
@@ -48,23 +52,24 @@ fun CategoryDetailScreen(
     category: CategoryWithComment,
     navController: NavController
 ) {
-    val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
-    var isAddPopupVisible by remember { mutableStateOf(false) }
+    var isAddOrEditPopupVisible by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             AppBarView(title = CATEGORY_DETAILS) {navController.navigateUp()}
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(all = 20.dp),
-                contentColor = Color.White,
-                backgroundColor = colorResource(id = R.color.teal_700),
-                onClick = {
-                    isAddPopupVisible = true
+            if (!category.hasComment) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(all = 20.dp),
+                    contentColor = Color.White,
+                    backgroundColor = colorResource(id = R.color.teal_700),
+                    onClick = {
+                        isAddOrEditPopupVisible = true
+                    }
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
                 }
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         scaffoldState = scaffoldState
@@ -94,21 +99,64 @@ fun CategoryDetailScreen(
                         .size(200.dp)
                         .aspectRatio(1F)
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                if (category.hasComment) {
+                    CommentView(
+                        comment = category.comment,
+                        onDelete = { /*TODO*/ },
+                        onEdit = { isAddOrEditPopupVisible = true }
+                    )
+                }
+
                 Text(
                     text = category.strCategoryDescription,
                     textAlign = TextAlign.Justify,
                     style = TextStyle(
                         fontSize = 18.sp
                     ),
-                    modifier = Modifier.verticalScroll(rememberScrollState())
+                    modifier = Modifier
+                        .padding(start = 8.dp, end = 8.dp)
+                        .verticalScroll(rememberScrollState())
                 )
-                if (isAddPopupVisible) {
-                    AddCommentPopup(
+                if (isAddOrEditPopupVisible) {
+                    AddOrEditCommentPopup(
+                        navController = navController,
                         viewModel = viewModel,
                         category = category,
-                        onDismiss = { isAddPopupVisible = false }
+                        onDismiss = { isAddOrEditPopupVisible = false }
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun CommentView(
+    comment: String,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
+) {
+    Column(
+        modifier = Modifier.padding(8.dp)
+    ) {
+        OutlinedTextField(
+            value = comment,
+            onValueChange = {},
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = "Comment") },
+            readOnly = true
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(onClick = { onEdit() }) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
+            }
+            IconButton(onClick = { onDelete() }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
             }
         }
     }

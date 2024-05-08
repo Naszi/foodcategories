@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.naszi.mobilapp.foodcategories.model.Category
 import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.ui.CategoryDetailScreen
 import com.naszi.mobilapp.foodcategories.ui.CategoryScreen
@@ -35,7 +34,7 @@ fun CategoryApp(
         composable(route = Screen.DetailScreen.route) {
             val category =
                 navController.previousBackStackEntry?.savedStateHandle?.get<CategoryWithComment>("category")
-                    ?: CategoryWithComment("", "", "", "", "")
+                    ?: CategoryWithComment("", "", "", "", 0, "")
             CategoryDetailScreen(
                 viewModel = categoriesViewModel,
                 category = category,

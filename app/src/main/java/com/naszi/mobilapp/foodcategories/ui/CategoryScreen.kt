@@ -1,6 +1,7 @@
 package com.naszi.mobilapp.foodcategories.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.Scaffold
@@ -28,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.CategoriesState
-import com.naszi.mobilapp.foodcategories.model.Category
 import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.utils.Constants.FOOD_CATEGORY
 
@@ -73,6 +74,11 @@ fun CategoriesScreen(
     ) {
         items(categories) {
             category ->
+            Row(
+                modifier = Modifier.clickable { navigateToDetail(category) }
+            ) {
+
+            }
             CategoryItem(category = category, navigateToDetail)
         }
     }
@@ -111,6 +117,18 @@ fun CategoryItem(
                 ),
                 modifier = Modifier.padding(4.dp)
             )
+        }
+        if (category.hasComment) {
+            Box(
+                modifier = Modifier.padding(top = 10.dp, end = 10.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .background(Color.Green, shape = CircleShape)
+                )
+            }
         }
     }
 }

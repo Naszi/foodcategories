@@ -9,5 +9,7 @@ data class CategoryWithComment(
     val strCategory: String,
     val strCategoryThumb: String,
     val strCategoryDescription: String,
-    val comment: String = ""
+    val id: Long,
+    val comment: String = "",
+    var hasComment: Boolean = false
 ): Parcelable

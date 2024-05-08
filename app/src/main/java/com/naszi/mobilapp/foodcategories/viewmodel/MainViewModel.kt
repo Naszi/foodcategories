@@ -49,7 +49,9 @@ class MainViewModel(
                         strCategory = category.strCategory,
                         strCategoryThumb = category.strCategoryThumb,
                         strCategoryDescription = category.strCategoryDescription,
-                        comment = commentForCategory?.comment ?: ""
+                        id = commentForCategory?.id ?: 0L,
+                        comment = commentForCategory?.comment ?: "",
+                        hasComment = commentForCategory != null
                     )
                     categoriesWithComments.add(categoryWithComment)
                 }
@@ -71,12 +73,18 @@ class MainViewModel(
     fun addComment(comment: Comment) {
         viewModelScope.launch(Dispatchers.IO) {
             commentRepository.addComment(comment)
+            val category = _categoriesState.value.list.find { it.idCategory == comment.categoryItemId.toString() }
+            category?.hasComment = true
+            _categoriesState.value = _categoriesState.value.copy(list = _categoriesState.value.list)
         }
     }
 
     fun deleteComment(comment: Comment) {
         viewModelScope.launch {
             commentRepository.deleteComment(comment)
+            val category = _categoriesState.value.list.find { it.idCategory == comment.categoryItemId.toString() }
+            category?.hasComment = false
+            _categoriesState.value = _categoriesState.value.copy(list = _categoriesState.value.list)
         }
     }
 

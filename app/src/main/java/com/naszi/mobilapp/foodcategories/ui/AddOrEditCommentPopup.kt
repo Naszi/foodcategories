@@ -1,9 +1,9 @@
 package com.naszi.mobilapp.foodcategories.ui
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -20,33 +20,36 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.model.database.Comment
 import com.naszi.mobilapp.foodcategories.viewmodel.MainViewModel
 
 @Composable
-fun AddCommentPopup(
-    category: CategoryWithComment,
+fun AddOrEditCommentPopup(
+    navController: NavController,
+    category: CategoryWithComment?,
     viewModel: MainViewModel,
     onDismiss: () -> Unit
 ) {
-    var commentText by remember { mutableStateOf("") }
-
+    var commentText by remember { mutableStateOf(category?.comment ?: "") }
 
     AlertDialog(
         backgroundColor = colorResource(id = R.color.teal_200),
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Comment",
+                text = if (category?.hasComment == false) "Add Comment" else "Edit Comment",
                 style = TextStyle(
-                    fontSize = 18.sp,
+                    fontSize = 25.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
         },
+
         text = {
+            Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = colorResource(id = R.color.white)
@@ -54,31 +57,32 @@ fun AddCommentPopup(
                 value = commentText,
                 onValueChange = {
                     commentText = it
-                },
-                label = {
-                    Text(text = "Comment")
                 }
             )
         },
         confirmButton = {
-            Button(
+            TextButton(
                 onClick = {
                     val comment = Comment(
-                        categoryItemId = category.idCategory.toInt(),
+                        categoryItemId = category?.idCategory?.toInt() ?: 0,
                         comment = commentText
                     )
-                    viewModel.addComment(comment)
+                    if (category == null) {
+                        viewModel.addComment(comment)
+//                        navController.navigate(Screen.CategoryScreen.route)
+                    } else {
+                        // TODO viewModel.updateComment(category.idCategory.toInt(), commentText)
+                    }
                     onDismiss()
                 },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = colorResource(id = R.color.white)
-                )
+                modifier = Modifier.padding(8.dp)
             ) {
                 Text(
-                    text = "Send Comment",
+                    text = "Save",
                     style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
                 )
             }
@@ -91,9 +95,9 @@ fun AddCommentPopup(
                 Text(
                     text = "Cancel",
                     style = TextStyle(
-                        fontSize = 14.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = Color.White
                     )
                 )
             }

@@ -70,6 +70,12 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
 
+    // LiveData
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.runtime.rxjava2)
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
