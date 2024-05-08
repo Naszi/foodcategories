@@ -16,4 +16,8 @@ class CommentRepository(
     fun getCommentById(id: Long): Flow<Comment> {
         return commentDao.getCommentById(id)
     }
+
+    suspend fun getAllComments(): List<Comment> {
+        return commentDao.getAllComments()
+    }
 }

@@ -38,13 +38,14 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.Category
+import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.utils.Constants.CATEGORY_DETAILS
 import com.naszi.mobilapp.foodcategories.viewmodel.MainViewModel
 
 @Composable
 fun CategoryDetailScreen(
     viewModel: MainViewModel,
-    category: Category,
+    category: CategoryWithComment,
     navController: NavController
 ) {
     val context = LocalContext.current

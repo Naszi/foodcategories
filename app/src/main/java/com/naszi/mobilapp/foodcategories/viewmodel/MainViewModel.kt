@@ -6,16 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naszi.mobilapp.foodcategories.database.Graph
 import com.naszi.mobilapp.foodcategories.model.CategoriesState
+import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.model.database.Comment
 import com.naszi.mobilapp.foodcategories.repository.CommentRepository
 import com.naszi.mobilapp.foodcategories.service.foodCategoriesService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val commentRepository: CommentRepository = Graph.commentRepository
-): ViewModel() {
+) : ViewModel() {
     private val _categoriesState = mutableStateOf(CategoriesState())
     val categoriesState: State<CategoriesState> = _categoriesState
 
@@ -24,18 +26,43 @@ class MainViewModel(
     }
 
     private fun fetchCategories() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = foodCategoriesService.getCategories()
+                val commentsDeferred = async { commentRepository.getAllComments() }
+                val categoriesDeferred = async { foodCategoriesService.getCategories() }
+                val comments = commentsDeferred.await()
+                val categories = categoriesDeferred.await()
+                val categoriesList = categories.categories
+                val commentsList = comments.toList().ifEmpty { emptyList() }
+                val sortedCommentsList = if (commentsList.isNotEmpty()) {
+                    commentsList.sortedBy { it.categoryItemId }
+                } else {
+                    emptyList<Comment>()
+                }
+                val categoriesWithComments = mutableListOf<CategoryWithComment>()
+                for (category in categoriesList) {
+                    val commentForCategory = sortedCommentsList.find {
+                        it.categoryItemId == category.idCategory.toInt()
+                    }
+                    val categoryWithComment = CategoryWithComment(
+                        idCategory = category.idCategory,
+                        strCategory = category.strCategory,
+                        strCategoryThumb = category.strCategoryThumb,
+                        strCategoryDescription = category.strCategoryDescription,
+                        comment = commentForCategory?.comment ?: ""
+                    )
+                    categoriesWithComments.add(categoryWithComment)
+                }
+
                 _categoriesState.value = _categoriesState.value.copy(
-                    list = response.categories,
                     loading = false,
+                    list = categoriesWithComments,
                     error = null
                 )
             } catch (e: Exception) {
                 _categoriesState.value = _categoriesState.value.copy(
                     loading = false,
-                    error = "Error fetching categories ${e.message}"
+                    error = "Error: ${e.message}"
                 )
             }
         }

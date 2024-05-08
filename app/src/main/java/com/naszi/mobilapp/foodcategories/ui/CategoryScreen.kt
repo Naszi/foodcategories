@@ -29,13 +29,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.naszi.mobilapp.foodcategories.R
 import com.naszi.mobilapp.foodcategories.model.CategoriesState
 import com.naszi.mobilapp.foodcategories.model.Category
+import com.naszi.mobilapp.foodcategories.model.CategoryWithComment
 import com.naszi.mobilapp.foodcategories.utils.Constants.FOOD_CATEGORY
 
 @Composable
 fun CategoryScreen(
     modifier: Modifier = Modifier,
     viewState: CategoriesState,
-    navigateToDetail: (Category) -> Unit
+    navigateToDetail: (CategoryWithComment) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -64,8 +65,8 @@ fun CategoryScreen(
 
 @Composable
 fun CategoriesScreen(
-    categories: List<Category>,
-    navigateToDetail: (Category) -> Unit
+    categories: List<CategoryWithComment>,
+    navigateToDetail: (CategoryWithComment) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
@@ -79,8 +80,8 @@ fun CategoriesScreen(
 
 @Composable
 fun CategoryItem(
-    category: Category,
-    navigateToDetail: (Category) -> Unit
+    category: CategoryWithComment,
+    navigateToDetail: (CategoryWithComment) -> Unit
 ) {
     Card(
         modifier = Modifier
