@@ -127,7 +127,7 @@ fun CategoryItem(
                 Box(
                     modifier = Modifier
                         .size(20.dp)
-                        .background(Color.Green, shape = CircleShape)
+                        .background(colorResource(id = R.color.teal_700), shape = CircleShape)
                 )
             }
         }

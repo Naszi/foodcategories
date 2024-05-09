@@ -43,22 +43,18 @@ fun AddOrEditCommentPopup(
             Text(
                 text = if (category?.hasComment == false) "Add Comment" else "Edit Comment",
                 style = TextStyle(
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
         },
-
         text = {
-            Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = colorResource(id = R.color.white)
-                ),
                 value = commentText,
-                onValueChange = {
-                    commentText = it
-                }
+                onValueChange = { commentText = it },
+                modifier = Modifier.padding(top = 10.dp),
+                textStyle = TextStyle(fontSize = 16.sp),
+                label = { Text(text = "Comment") }
             )
         },
         confirmButton = {
@@ -82,9 +78,9 @@ fun AddOrEditCommentPopup(
                 Text(
                     text = "Save",
                     style = TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = colorResource(id = R.color.teal_700)
                     )
                 )
             }
@@ -97,7 +93,7 @@ fun AddOrEditCommentPopup(
                 Text(
                     text = "Cancel",
                     style = TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )

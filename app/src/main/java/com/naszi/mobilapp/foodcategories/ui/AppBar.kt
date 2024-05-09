@@ -27,7 +27,7 @@ fun AppBarView(
                 IconButton(onClick = { onBackNavClicked() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        tint = Color.White,
+                        tint = colorResource(id = R.color.teal_200),
                         contentDescription = null
                     )
                 }
@@ -40,7 +40,7 @@ fun AppBarView(
         title = {
             Text(
                 text = title,
-                color = Color.White,
+                color = colorResource(id = R.color.teal_200),
                 modifier = Modifier.run {
                     padding(start = 4.dp).heightIn(max = 24.dp)
                 }

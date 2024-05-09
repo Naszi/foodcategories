@@ -63,7 +63,7 @@ fun CategoryDetailScreen(
         floatingActionButton = {
             if (!category.hasComment) {
                 FloatingActionButton(
-                    modifier = Modifier.padding(all = 20.dp),
+                    modifier = Modifier.padding(all = 16.dp),
                     contentColor = Color.White,
                     backgroundColor = colorResource(id = R.color.teal_700),
                     onClick = {
@@ -85,23 +85,24 @@ fun CategoryDetailScreen(
                     .padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = category.strCategory,
                     textAlign = TextAlign.Center,
                     style = TextStyle(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.ExtraBold
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 )
                 Image(
                     painter = rememberAsyncImagePainter(model = category.strCategoryThumb),
                     contentDescription = "${category.strCategory} Thumbail",
                     modifier = Modifier
-                        .size(200.dp)
+                        .padding(8.dp)
+                        .size(150.dp)
                         .aspectRatio(1F)
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (category.hasComment) {
                     CommentView(
