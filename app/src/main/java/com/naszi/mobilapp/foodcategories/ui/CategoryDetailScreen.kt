@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -156,7 +157,7 @@ fun CommentView(
             value = comment,
             onValueChange = {},
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = "Comment") },
+            label = { Text(text = stringResource(id = R.string.comment)) },
             readOnly = true
         )
         Row(
@@ -164,10 +165,10 @@ fun CommentView(
             horizontalArrangement = Arrangement.End
         ) {
             IconButton(onClick = { onEdit() }) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
+                Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
             }
             IconButton(onClick = { onDelete() }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
             }
         }
     }
