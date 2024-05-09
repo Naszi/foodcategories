@@ -12,6 +12,7 @@ import com.naszi.mobilapp.foodcategories.repository.CommentRepository
 import com.naszi.mobilapp.foodcategories.service.foodCategoriesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -36,25 +37,22 @@ class MainViewModel(
                 val sortedCommentsList = if (commentsList.isNotEmpty()) {
                     commentsList.sortedBy { it.categoryItemId }
                 } else {
-                    emptyList<Comment>()
+                    emptyList()
                 }
-                val categoriesWithComments = mutableListOf<CategoryWithComment>()
-                for (category in categoriesList) {
-                    val commentForCategory = sortedCommentsList.find {
-                        it.categoryItemId == category.idCategory.toInt()
+                val categoriesWithComments = categoriesList.map { category ->
+                    val commentForCategory = sortedCommentsList.find { comment ->
+                        comment.categoryItemId == category.idCategory.toInt()
                     }
-                    val categoryWithComment = CategoryWithComment(
+                    CategoryWithComment(
                         idCategory = category.idCategory,
                         strCategory = category.strCategory,
                         strCategoryThumb = category.strCategoryThumb,
                         strCategoryDescription = category.strCategoryDescription,
-                        id = commentForCategory?.id ?: 0L,
+                        id = commentForCategory?.id ?: 0,
                         comment = commentForCategory?.comment ?: "",
                         hasComment = commentForCategory != null
                     )
-                    categoriesWithComments.add(categoryWithComment)
                 }
-
                 _categoriesState.value = _categoriesState.value.copy(
                     loading = false,
                     list = categoriesWithComments,
@@ -63,7 +61,7 @@ class MainViewModel(
             } catch (e: Exception) {
                 _categoriesState.value = _categoriesState.value.copy(
                     loading = false,
-                    error = "Error: ${e.message}"
+                    error = "Network error occurred: ${e.message}"
                 )
             }
         }
@@ -72,27 +70,31 @@ class MainViewModel(
     fun addComment(comment: Comment) {
         viewModelScope.launch(Dispatchers.IO) {
             commentRepository.addComment(comment)
-            val category =
-                _categoriesState.value.list.find { it.idCategory == comment.categoryItemId.toString() }
-            category?.hasComment = true
-            _categoriesState.value = _categoriesState.value.copy(list = _categoriesState.value.list)
-            fetchCategories()
+            val updatedCategories = _categoriesState.value.list.map { category ->
+                if (category.idCategory == comment.categoryItemId.toString()) {
+                    category.copy(
+                        comment = comment.comment,
+                        hasComment = true
+                    )
+                } else {
+                    category
+                }
+            }
+            _categoriesState.value = _categoriesState.value.copy(list = updatedCategories)
         }
     }
 
     fun updateComment(categoryId: Int, comment: Comment) {
         viewModelScope.launch(Dispatchers.IO) {
             commentRepository.updateComment(comment)
-            _categoriesState.value = _categoriesState.value.copy(
-                list = _categoriesState.value.list.map { category ->
-                    if (category.idCategory.toInt() == categoryId) {
-                        category.copy(comment = comment.comment)
-                    } else {
-                        category
-                    }
+            val updatedCategories = _categoriesState.value.list.map { category ->
+                if (category.idCategory.toInt() == categoryId) {
+                    category.copy(comment = comment.comment)
+                } else {
+                    category
                 }
-            )
-            fetchCategories()
+            }
+            _categoriesState.value = _categoriesState.value.copy(list = updatedCategories)
         }
     }
 
